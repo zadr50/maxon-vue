@@ -1,12 +1,14 @@
 <template>
   <div>
-      <h1>Daftar Purchase Order</h1>
+      <h1><span class='el-icon-paperclip'> Daftar Purchase Order</span></h1>
+      <i style='color:red'>{{message}}</i>
       <el-divider></el-divider> 
+      Date From: 
+      <el-date-picker v-model="date1" type="datetime" size="mini"/>
+      <el-date-picker v-model="date2" type="datetime" size="mini"/>
       <el-input v-model="search" size="mini" placeholder="Type to search" style="width:200px" />
-      <el-button size="mini" type="primary" @click="handleAdd()">Addnew</el-button>
       <el-button size="mini" type="success" @click="handleRefresh()">Refresh</el-button>
-      <el-button size="mini" type="info" @click="handlePrint()">Print</el-button>
-      <div class="alert alert-error">{{message}}</div>  
+      <el-button size="mini" type="primary" @click="handleAdd()">Addnew</el-button>
 
   <el-table :data="tableData.filter(data => !search || data.supplier_name.toLowerCase().includes(search.toLowerCase()))"
     style="width: 99%">
@@ -19,7 +21,7 @@
       </template>
       <template slot-scope="scope">
         <el-button
-          size="mini"
+          size="mini" type='warning'
           @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
         <el-button
           size="mini"
@@ -46,7 +48,14 @@
             <el-input v-model="form.purchase_order_number"></el-input>
         </el-form-item>
         <el-form-item label="Kode Supplier">
-            <el-input v-model="form.supplier_number"></el-input>
+            <el-select v-model="form.supplier_number" placeholder="please select supplier">
+              <el-option v-for="(sup,idx) in SupplierList" 
+                  :label="sup.supplier_name" 
+                  :value="sup.supplier_number" 
+                  :key="idx" >
+              </el-option>
+            </el-select>
+
         </el-form-item>
         <el-form-item label="Tanggal">
             <el-date-picker
@@ -64,9 +73,9 @@
         </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
+      <i style='color:red'>{{message}}</i>
       <el-button @click="dialogVisible = false">Cancel</el-button>
       <el-button type="primary" @click="onSubmit">Confirm</el-button>
-      <span>{{message}}</span>
     </span>
   </el-dialog>
   </div>
@@ -87,11 +96,13 @@
         message: "",  
         mode:"add",
         page:1,
+        date1:new Date(),
+        date2:new Date(),
         form: {
-          purchase_order_number: '',
-          sales_date: '',
-          terms: '',
-          supplier_number: '',
+          purchase_order_number: 'AUTO',
+          po_date: new Date(),
+          terms: 'KREDIT',
+          supplier_number: 'CASH',
           comments: '',
         },
         columns: [
@@ -100,7 +111,8 @@
           {label: "Tanggal", field:"po_date"},
           {label: "Termin", field:"terms"},
           {label: "Jumlah", field:"amount"},
-        ]
+        ],
+        SupplierList: [{}],
       }
     },
     methods: {
@@ -111,14 +123,8 @@
          this.loadData()
       },
       handleEdit(index, row) {
-        console.log(index, row);
-        this.dialogVisible=true;
-        this.form.purchase_order_number=this.tableData[index].purchase_order_number;
-        this.form.po_date=this.tableData[index].po_date;
-        this.form.terms=this.tableData[index].terms;
-        this.form.supplier_number=this.tableData[index].supplier_number;
-        this.form.comments=this.tableData[index].comments;
-        this.mode="view";
+        var vUrl="/po/view/"+this.tableData[index].purchase_order_number;
+        window.open(vUrl,"_self");
       },
       handleDelete(index, row) {
         this.$confirm('Are you sure delete this supplier ?')
@@ -148,7 +154,7 @@
           .catch(_ => {});
       },
       loadData(){
-        var vUrl='/api/purchase_order/browse_data/'+this.page;
+        var vUrl='/api/purchase_order/browse_data/'+this.page+"?sid_date_from="+this.date1+"&sid_date_to="+this.date2;
         axios.get(vUrl)
             .then((Response) => {
                 this.tableData = Response.data.rows;
@@ -168,9 +174,15 @@
 
         axios.post(vUrl,formData)
             .then((Response) => {
-                this.dialogVisible=false;
-                this.message="Success";
-                this.loadData();
+                if(Response.data.success){
+                  this.dialogVisible=false;
+                  this.message="Success";
+                  this.form.purchase_order_number=Response.data.purchase_order_number;
+                  vUrl="/po/view/"+Response.data.purchase_order_number;
+                  window.open(vUrl,"_self");
+                } else {
+                  this.message=Response.data.msg;
+                }
             })
             .catch((err) => {
                 this.message='Error'
@@ -184,10 +196,29 @@
           console.log(`current page: ${val}`);
           this.page=val;
           this.loadData();
-        }
+        },
+        SupplierListLoad(){
+        var vUrl='/api/supplier/browse_data/1/1000';
+        axios.get(vUrl)
+            .then((Response) => {
+                this.SupplierList = Response.data.rows;
+            })
+            .catch((err) => {
+                console.log("Error")
+        })
+      },
+
     },
     mounted: function(){
+      var d=new Date();  var month = d.getMonth();  var day = d.getDate(); var year = d.getFullYear();
+      if (month.length < 2)  month = '0' + month;  if (day.length < 2)    day = '0' + day;
+
+      this.date1=[year,month,'01'].join('-')
+      this.date2=[year,month+2,'01'].join('-')
+
       this.loadData()
+      this.SupplierListLoad()
+
     },
        
   }

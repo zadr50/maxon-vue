@@ -1,6 +1,6 @@
 <template>
   <div>
-      <h1>Daftar Sales Order</h1>
+      <h1><span class='el-icon-paperclip'> Daftar Sales Order</span></h1>
       <p><i style='color:red'>{{message}}</i></p>
       <el-divider></el-divider> 
       Date From: 
@@ -21,7 +21,7 @@
       <template slot="header" >
       </template>
       <template slot-scope="scope">
-        <el-button  size="mini" type="success" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+        <el-button  size="mini" type="warning" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
         <el-button  size="mini"  type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
       </template>
     </el-table-column>
@@ -62,6 +62,7 @@
         </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
+      <i style='color:red'>{{message}}</i>
       <el-button @click="dialogVisible = false">Cancel</el-button>
       <el-button type="primary" @click="onSubmit">Confirm</el-button>
     </span>
@@ -132,11 +133,6 @@
         this.mode="add";
       },
       handleClose(done) {
-        //this.$confirm('Are you sure to close this dialog?')
-        //  .then(_ => {
-        //    done();
-        //  })
-        //  .catch(_ => {});
         done();
       },
       loadData(){

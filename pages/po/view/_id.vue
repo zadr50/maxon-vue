@@ -1,10 +1,9 @@
 <template>
   <div>
-    <h2><span class='el-icon-paperclip'> Sales Order</span></h2>
+    <h2><span class='el-icon-paperclip'> Purchase Order</span></h2>
     <template>
       <el-button @click="saveDoc()" size="mini" type="primary"><span class='el-icon-coin'> Save</span></el-button>
       <el-button @click="printDoc()" size="mini" type="warning"><span class='el-icon-printer'> Print</span></el-button>
-
     </template>
     <i style='color:red'>{{message}}</i>
     <el-divider></el-divider>
@@ -13,27 +12,24 @@
       <el-form ref="form" :model="form" label-width="120px">
           <el-col :span="10">
             <el-form-item label="Nomor SO#">
-              <el-input v-model="form.sales_order_number"></el-input>
+              <el-input v-model="form.purchase_order_number"></el-input>
             </el-form-item>                  
             <el-form-item label="Tanggal">
               <el-date-picker
-              v-model="form.sales_date"
+              v-model="form.po_date"
               type="datetime"
               placeholder="Select date and time"
               default-time="12:00:00">
               </el-date-picker>                              
             </el-form-item>
             <el-form-item label="Termin">
-              <el-input v-model="form.payment_terms"></el-input>
+              <el-input v-model="form.terms"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="14">
-            <el-form-item label="Pelanggan">
-                <el-input v-model="form.sold_to_customer"></el-input>
+            <el-form-item label="Supplier">
+                <el-input v-model="form.supplier_number"></el-input>
             </el-form-item>                  
-            <el-form-item label="Salesman">
-              <el-input v-model="form.salesman"></el-input>
-            </el-form-item>
             <el-form-item label="Comments">
               <el-input v-model="form.comments" type="textarea"></el-input>
             </el-form-item>
@@ -45,7 +41,6 @@
       <h3><span class='el-icon-tickets'> Data Items</span></h3>
       <el-button @click="addRow()" size="mini" type="primary"><span class='el-icon-document-add'> Add Row</span></el-button>
       <el-button @click="loadItems()" size="mini" type="success" ><span class='el-icon-refresh-left'> Refresh</span></el-button>
-
       <el-divider></el-divider>
       <el-table style="width: 100%" :data="tableData">
         <el-table-column label="Kode Barang" prop="item_number">
@@ -73,9 +68,9 @@
                 <el-input size="small" style="text-align:right"  v-model="scope.row.price"  />
               </template>
         </el-table-column>
-        <el-table-column label="Jumlah" prop="amount" width="120px">
+        <el-table-column label="Jumlah" prop="total_price" width="120px">
               <template slot-scope="scope" style="text-align:right" >
-                <el-input size="small" style="text-align:right"  v-model="scope.row.amount"  />
+                <el-input size="small" style="text-align:right"  v-model="scope.row.total_price"  />
               </template>
         </el-table-column>
         <el-table-column>
@@ -109,7 +104,7 @@
               <el-input v-model="form_item.discount"></el-input>
           </el-form-item>
           <el-form-item label="Amount">
-              <el-input v-model="form_item.amount"></el-input>
+              <el-input v-model="form_item.total_price"></el-input>
           </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -134,11 +129,10 @@
         dialogVisible:false,
         tableData: [{item_number: 'Loading...'}],
         form: {
-          sales_order_number: this.$route.params.id,
-          sold_to_customer: 'CASH',
-          sales_date: new Date(),
-          salesman: 'OFFICE',
-          payment_terms: 'KREDIT',
+          purchase_order_number: this.$route.params.id,
+          supplier_number: 'CASH',
+          po_date: new Date(),
+          terms: 'KREDIT',
           comments: '',
         },
         form_item: {
@@ -148,7 +142,7 @@
           unit:'',
           price:'',
           discount:'',
-          amount:'',
+          total_price:'',
           line_number:'',
         },
         columns: [
@@ -158,7 +152,7 @@
           {label: "Unit", field:"unit"},
           {label: "Price", field:"price"},
           {label: "Disc%", field:"discount"},
-          {label: "Jumlah", field:"amount"},
+          {label: "Jumlah", field:"total_price"},
           {label: "Line", field:"line_number"},
         ],
         addCount: 0,
@@ -177,7 +171,7 @@
         })
         formData.append("mode",this.mode);
 
-        var vUrl='/api/sales_order/save';
+        var vUrl='/api/purchase_order/save';
 
         axios.post(vUrl,formData)
             .then((Response) => {
@@ -194,18 +188,18 @@
             })        
       },
       printDoc() {
-        var vUrl='/api/sales_order/print_so/'+this.form.sales_order_number;
+        var vUrl='/api/purchase_order/print_po/'+this.form.purchase_order_number;
         window.open(vUrl,"_blank")
 
       },
       deleteDoc() {
         this.$confirm('Are you sure delete this document ?')
           .then(_ => {
-          var vUrl='/api/sales_order/delete/'+this.form.sales_order_number;
+          var vUrl='/api/purchase_order/delete/'+this.form.purchase_order_number;
           axios.get(vUrl)
             .then((Response) => {
                 this.message=Response.data.msg;
-                window.open("/api/sales_order","_self");
+                window.open("/api/purchase_order","_self");
             })
             .catch((err) => {
                 this.message=err;
@@ -214,14 +208,13 @@
         .catch(_ => {});        
       },
       getData(){
-        var vUrl='/api/sales_order/view/'+this.form.sales_order_number+"?json=true";
+        var vUrl='/api/purchase_order/view/'+this.form.purchase_order_number+"?json=true";
         axios.get(vUrl)
         .then((Response) => {
-            this.form.sales_order_number = Response.data.sales_order_number;
-            this.form.sales_date=Response.data.sales_date;
-            this.form.sold_to_customer=Response.data.sold_to_customer;
-            this.form.payment_terms=Response.data.payment_terms;
-            this.form.salesman=Response.data.salesman;
+            this.form.purchase_order_number = Response.data.purchase_order_number;
+            this.form.po_date=Response.data.po_date;
+            this.form.supplier_number=Response.data.supplier_number;
+            this.form.terms=Response.data.terms;
             this.form.comments=Response.data.comments;
         })
         .catch((err) => {
@@ -236,7 +229,7 @@
       },            
       loadItems(){
         this.message="Loading...";
-        var vUrl='/api/sales_order/items/'+this.form.sales_order_number+"?json=true";
+        var vUrl='/api/purchase_order/items/'+this.form.purchase_order_number+"?json=true";
         axios.get(vUrl)
           .then((Response) => {
               this.tableData = Response.data.rows;
@@ -252,15 +245,15 @@
         ++ this.addCount;
       },
       saveRow(index, rows) { 
-        var vUrl='/api/sales_order/save_item';
+        var vUrl='/api/purchase_order/save_item';
         var formData = new FormData()
-        formData.append("sales_order_number",this.form.sales_order_number);
+        formData.append("purchase_order_number",this.form.purchase_order_number);
         formData.append("item_number",rows.item_number);
         formData.append("description",rows.description);
         formData.append("quantity",rows.quantity);
         formData.append("unit",rows.unit);
         formData.append("price",rows.price);
-        formData.append("amount",rows.amount);
+        formData.append("total_price",rows.total_price);
         if(rows.line_number) {
           formData.append("mode","edit");
           formData.append("line_number",rows.line_number);
@@ -281,7 +274,7 @@
       deleteRow(index, row) {
         this.$confirm('Are you sure delete this supplier ?')
           .then(_ => {
-          var vUrl='/api/sales_order/delete_item/'+this.tableData[index].line_number;
+          var vUrl='/api/purchase_order/delete_item/'+this.tableData[index].line_number;
           axios.get(vUrl)
             .then((Response) => {
                 this.message=Response.data.msg;

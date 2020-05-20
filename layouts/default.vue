@@ -10,7 +10,7 @@
             <span v-on:click="collapseSidebar()">
               <i class="fas fa-bars"></i>
             </span>
-            <h2>MaxonErp</h2>
+            <h2><span class='el-icon-folder-opened'> MaxonErp</span></h2>
             <h5>Software Bisnis</h5>
             <p>{{message}}</p>
           </div>           
