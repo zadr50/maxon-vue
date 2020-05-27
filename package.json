@@ -1,0 +1,22 @@
+{
+  "name": "maxon4",
+  "version": "1.0.0",
+  "description": "Automation your business",
+  "author": "andri",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NUXT_HOST=0.0.0.0 nuxt",
+    "build": "cross-env NUXT_HOST=0.0.0.0 nuxt build",
+    "start": "cross-env NUXT_HOST=0.0.0.0 nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/toast": "^3.3.0",
+    "cross-env": "^7.0.2",
+    "echarts": "^4.7.0",
+    "element-ui": "^2.4.11",
+    "nuxt": "^2.0.0"
+  },
+  "devDependencies": {}
+}
