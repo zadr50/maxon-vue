@@ -17,18 +17,14 @@
     <el-table-column v-for="col in columns"  :label="col.label" :prop="col.field" 
         v-bind:key="col"  v-model="tableColumn">
     </el-table-column>
-    <el-table-column
-      align="left">
-      <template slot="header" >
-      </template>
+    <el-table-column width=70>
       <template slot-scope="scope">
-        <el-button
-          size="mini"
-          @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-        <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+        <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+      </template>
+    </el-table-column>
+    <el-table-column width=70>
+      <template slot-scope="scope">
+        <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Del</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -43,7 +39,7 @@
     :before-close="handleClose">
     <el-form ref="form" :model="form" label-width="120px">
       <el-row>
-        <el-col :span=10>
+        <el-col :span=10 :xs=23>
           <el-form-item label="Kode">
               <el-input v-model="form.item_number"></el-input>
           </el-form-item>
@@ -57,7 +53,7 @@
               <el-input v-model="form.unit_of_measure"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span=10>
+        <el-col :span=10 :xs=23>
           <el-form-item label="Supplier">
               <el-input v-model="form.supplier_number"></el-input>
           </el-form-item>
@@ -67,9 +63,28 @@
           <el-form-item label="Harga Beli">
               <el-input v-model="form.cost_from_mfg"></el-input>
           </el-form-item>
-          <el-form-item label="Picture">
-              <el-input v-model="form.item_picture"></el-input>
-          </el-form-item>
+        </el-col>
+        <el-col :span=23>
+          <el-col :span=8>
+            <el-form-item label="Picture">
+                <el-input v-model="form.item_picture"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span=7>
+            <el-form-item label="Picture2">
+                <el-input v-model="form.item_picture2"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span=8>
+            <el-form-item label="Picture3">
+                <el-input v-model="form.item_picture3"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span=7>
+            <el-form-item label="Picture4">
+                <el-input v-model="form.item_picture4"></el-input>
+            </el-form-item>
+          </el-col>
         </el-col>
         <el-col :span=23>
           <el-form-item label="Deskripsi Barang">
@@ -80,9 +95,9 @@
     </el-form>
     
     <span slot="footer" class="dialog-footer">
+      <span>{{message}}</span>
       <el-button @click="dialogVisible = false">Cancel</el-button>
       <el-button type="primary" @click="onSubmit">Confirm</el-button>
-      <span>{{message}}</span>
     </span>
   </el-dialog>
 
@@ -114,6 +129,9 @@
           special_features:'',
           supplier_number:'',
           item_picture:'',
+          item_picture2:'',
+          item_picture3: '',
+          item_picture4: ''
         },
         columns: [
           {label: "Kode", field:"item_number"},
@@ -149,8 +167,11 @@
                 var o=Response.data;
                 this.form.supplier_number=o.supplier_number;
                 this.form.special_features=o.special_features;
-                this.form.item_picture=o.item_picture           
+                this.form.item_picture=o.item_picture                         
                 this.form.cost_from_mfg=o.cost_from_mfg;
+                this.form.item_picture2=o.item_picture2                         
+                this.form.item_picture3=o.item_picture3                         
+                this.form.item_picture4=o.item_picture4                         
                 this.$toast.clear()
             })
             .catch((err) => {
@@ -183,6 +204,7 @@
         this.clear();
       },
       clear(){
+        this.message='';
         this.form.item_number="AUTO";
         this.form.description="";
         this.form.special_features="";
@@ -192,6 +214,9 @@
         this.form.retail=0;
         this.form.cost_from_mfg=0;
         this.form.item_picture="";
+        this.form.item_picture2="";
+        this.form.item_picture3="";
+        this.form.item_picture4="";
 
       },
       handleClose(done) {
