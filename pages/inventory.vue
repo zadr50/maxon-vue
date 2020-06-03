@@ -41,54 +41,56 @@
       <el-row>
         <el-col :span=10 :xs=23>
           <el-form-item label="Kode">
-              <el-input v-model="form.item_number"></el-input>
+              <el-input v-model="form.item_number" size="small"></el-input>
           </el-form-item>
           <el-form-item label="Nama Barang">
-              <el-input v-model="form.description"></el-input>
+              <el-input v-model="form.description" size="small"></el-input>
           </el-form-item>
           <el-form-item label="Kategori">
-              <el-input v-model="form.category"></el-input>
+              <el-input v-model="form.category" size="small"></el-input>
           </el-form-item>
           <el-form-item label="Satuan">
-              <el-input v-model="form.unit_of_measure"></el-input>
+              <el-input v-model="form.unit_of_measure" size="small"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span=10 :xs=23>
           <el-form-item label="Supplier">
-              <el-input v-model="form.supplier_number"></el-input>
+              <el-input v-model="form.supplier_number" size="small"></el-input>
           </el-form-item>
           <el-form-item label="Harga Jual">
-              <el-input v-model="form.retail"></el-input>
+              <el-input v-model="form.retail"  size="small"></el-input>
           </el-form-item>
           <el-form-item label="Harga Beli">
-              <el-input v-model="form.cost_from_mfg"></el-input>
+              <el-input v-model="form.cost_from_mfg"  size="small"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span=23>
-          <el-col :span=8>
+          <el-col :span=12>
             <el-form-item label="Picture">
-                <el-input v-model="form.item_picture"></el-input>
+                <el-input v-model="form.item_picture" size="small"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span=7>
+          <el-col :span=10>
             <el-form-item label="Picture2">
-                <el-input v-model="form.item_picture2"></el-input>
+                <el-input v-model="form.item_picture2" size="small"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span=8>
+        </el-col>
+        <el-col :span=23>
+          <el-col :span=12>
             <el-form-item label="Picture3">
-                <el-input v-model="form.item_picture3"></el-input>
+                <el-input v-model="form.item_picture3" size="small"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span=7>
+          <el-col :span=10>
             <el-form-item label="Picture4">
-                <el-input v-model="form.item_picture4"></el-input>
+                <el-input v-model="form.item_picture4" size="small"></el-input>
             </el-form-item>
           </el-col>
         </el-col>
         <el-col :span=23>
           <el-form-item label="Deskripsi Barang">
-              <el-input type="textarea" v-model="form.special_features"></el-input>
+              <el-input type="textarea" v-model="form.special_features" size="small"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -273,3 +275,8 @@
        
   }
 </script>
+<style scoped>
+.el-form-item {
+    margin-bottom: 3px;
+}
+</style>
