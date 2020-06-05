@@ -37,7 +37,7 @@
     title="Master Data Inventory"
     :visible.sync="dialogVisible"  width="60%"
     :before-close="handleClose">
-    <el-form ref="form" :model="form" label-width="120px">
+    <el-form ref="form" :model="form" label-width="120px" enctype="multipart/form-data">
       <el-row>
         <el-col :span=10 :xs=23>
           <el-form-item label="Kode">
@@ -67,30 +67,38 @@
         <el-col :span=23>
           <el-col :span=12>
             <el-form-item label="Picture">
-                <el-input v-model="form.item_picture" size="small"></el-input>
+             <el-input v-model="form.item_picture"  size="small" style="display:none" />         
+             {{form.item_picture}}     
+              <input type="file" ref="file1" v-on:change="handleFileUpload(1)"/>              
             </el-form-item>
           </el-col>
           <el-col :span=10>
             <el-form-item label="Picture2">
-                <el-input v-model="form.item_picture2" size="small"></el-input>
+                <el-input  v-model="form.item_picture2" size="small" style="display:none"></el-input>
+                {{form.item_picture2}}     
+                <input type="file" ref="file2" v-on:change="handleFileUpload(2)"/>              
             </el-form-item>
           </el-col>
         </el-col>
         <el-col :span=23>
           <el-col :span=12>
             <el-form-item label="Picture3">
-                <el-input v-model="form.item_picture3" size="small"></el-input>
+                <el-input   v-model="form.item_picture3" size="small" style="display:none"></el-input>
+                {{form.item_picture3}}     
+                <input type="file" ref="file3" v-on:change="handleFileUpload(3)"/>              
             </el-form-item>
           </el-col>
           <el-col :span=10>
             <el-form-item label="Picture4">
-                <el-input v-model="form.item_picture4" size="small"></el-input>
+                <el-input   v-model="form.item_picture4" size="small" style='display:none'></el-input>
+                {{form.item_picture4}}     
+                <input type="file" ref="file4" v-on:change="handleFileUpload(4)"/>              
             </el-form-item>
           </el-col>
         </el-col>
         <el-col :span=23>
           <el-form-item label="Deskripsi Barang">
-              <el-input type="textarea" v-model="form.special_features" size="small"></el-input>
+              <el-input  type="textarea" v-model="form.special_features" size="small"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -115,6 +123,7 @@
     },
     data() {
       return {
+        file:null,
         tableData: [{item_number: 'Loading...'}],
         search: '',
         dialogVisible: false,
@@ -147,6 +156,56 @@
       }
     },
     methods: {
+      handleFileUpload(idx){
+        if(idx==1) {
+          this.file = this.$refs.file1.files[0];
+          this.form.item_picture=this.file.name
+        }
+        if(idx==2) {
+          this.file = this.$refs.file2.files[0];
+          this.form.item_picture2=this.file.name
+        }
+        if(idx==3) {
+          this.file = this.$refs.file3.files[0];
+          this.form.item_picture3=this.file.name
+        }
+        if(idx==4) {
+          this.file = this.$refs.file4.files[0];
+          this.form.item_picture4=this.file.name
+        }               
+        this.submitFile()
+      },
+      submitFile(){
+        /*
+                Initialize the form data
+            */
+            let formData = new FormData();
+
+            /*
+                Add the form data we need to submit
+            */
+            formData.append('userfile', this.file);
+
+        /*
+          Make the request to the POST /single-file URL
+        */
+            axios.post( this.siteUrl + '/index.php/inventory/do_upload_picture',
+                formData,
+                {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Access-Control-Allow-Origin': "*"
+                }
+              }
+            ).then(function(Response){
+              console.log(Response)
+              this.message='Success Upload ' + this.file.name;
+            })
+            .catch(function(){
+              
+              this.message='Failure upload!';
+            });
+      },
       handlePrint(){
         alert("Not Available")
       },
@@ -219,7 +278,11 @@
         this.form.item_picture2="";
         this.form.item_picture3="";
         this.form.item_picture4="";
-
+        this.file=null;
+        this.$refs.file1=null
+        this.$refs.file2=null
+        this.$refs.file3=null
+        this.$refs.file4=null
       },
       handleClose(done) {
         done();
@@ -271,6 +334,9 @@
     },
     mounted: function(){
       this.loadData()
+    },
+    computed: {
+       siteUrl() { return process.env.siteUrl }      
     },
        
   }
