@@ -33,10 +33,14 @@
               <el-menu-item index="1-4-1">Laporan Penjualan</el-menu-item>
             </el-submenu>
           </el-submenu>
-          <el-menu-item index="4">
-            <i class="el-icon-setting"></i>
-            <span>Setting</span>
-          </el-menu-item>
+          <el-submenu index="4" :is-opened="false">
+            <template slot="title">
+              <i class="el-icon-setting"></i>
+              <span>Setting</span>
+            </template>
+            <el-menu-item index="4-1"><NLink to='/set/toko'>Seting Toko</NLink></el-menu-item>
+            <el-menu-item index="4-2"><NLink to='/set/media'>Image & Media</NLink></el-menu-item>
+          </el-submenu>
         </el-menu>
 </template>
 <style>
